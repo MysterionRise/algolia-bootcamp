@@ -1,9 +1,16 @@
 import asyncio
-from settings import TOKEN
 import logging
 import sqlite3
+
+from settings import TOKEN
 from telegram import ForceReply, Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+    MessageHandler,
+    filters,
+)
 
 # Enable logging
 logging.basicConfig(
@@ -44,13 +51,15 @@ def process_message(msg):
 async def ticket_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Try to parse message and assign ticket respectively"""
     msg = update.message.text
-    chat_id = update.message.chat.id
+    # chat_id = update.message.chat.id
     user = process_message(msg)
 
     # TODO need to find if user is part of chat?
     if user is not None and user.startswith("@"):
         con = sqlite3.connect(DB_NAME.format(update.message.chat.id))
-        con.execute("INSERT OR IGNORE INTO users (name, score) VALUES ('{}', 0)".format(user))
+        con.execute(
+            "INSERT OR IGNORE INTO users (name, score) VALUES ('{}', 0)".format(user)
+        )
         con.execute(f"UPDATE users SET score = score + 100 WHERE name='{user}'")
         con.commit()
         await update.message.reply_text(f"Assigned ticket to {user}")
@@ -77,10 +86,12 @@ def main() -> None:
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("top", top))
 
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ticket_handler))
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, ticket_handler)
+    )
 
     application.run_polling()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())
