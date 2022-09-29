@@ -1,6 +1,6 @@
-/data/
-
 .DS_Store
 .idea/
 venv
 
+/settings.py
+*.db
