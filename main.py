@@ -13,6 +13,8 @@ from telegram.ext import (
 )
 
 # Enable logging
+from command_processing import process_message
+
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
@@ -36,16 +38,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued"""
     await update.message.reply_text("Help!")
-
-
-def process_message(msg):
-    if "biletik" in msg:
-        words = msg.split(" ")
-        pos = words.index("biletik")
-        if pos != -1 and pos + 1 < len(words):
-            user = words[pos + 1]
-            return user
-    return None
 
 
 async def ticket_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

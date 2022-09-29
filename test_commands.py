@@ -1,4 +1,4 @@
-from main import process_message
+from command_processing import process_message
 
 
 def test_simple():
